@@ -6,7 +6,7 @@ set -e
 # You don't need to prepare any source file for these
 # directories, they will be cloned from Yang's GitHub
 
-nr_threads=16
+nr_threads=`getconf NPROCESSORS_CONF`
 
 llvm_root=/public  # root dir for LLVM to store source and build
 llvm_dir=$llvm_root/llvm/  # dir to hold llvm source
@@ -22,6 +22,20 @@ netbsd_releasedir=/usr/releasedir/
 netbsd_external_objdir=/usr/extern_objdir/
 netbsd_objdir=/usr/objdir/
 netbsd_xsrc=/usr/xsrc/
+
+# check dependencies
+check_command() {
+    cmd=$1
+    echo -n $cmd": " && command -v $cmd || \
+	    { echo "missing"; exit 1; }
+}
+
+check_command clang
+check_command clang++
+clang_path=`command -v clang || echo`
+clangpp_path=`command -v clang++ || echo`
+check_command git
+check_command cmake
 
 echo "Please make sure the following settting \
 is correct and the directories do not exist:"
@@ -78,6 +92,8 @@ ln -s $clang_dir $llvm_dir/tools/clang
 mkdir -p $llvm_build_dir
 (cd $llvm_build_dir && \
      cmake -DCMAKE_BUILD_TYPE=Release \
+	   -DCMAKE_C_COMPILER=$clang_path \
+	   -DCMAKE_CXX_COMPILER=$clangpp_path \
 	   -DCLANG_DEFAULT_CXX_STDLIB=libc++ \
 	   -DCLANG_DEFAULT_RTLIB=compiler-rt \
 	   -DSANITIZER_CXX_ABI=libc++ \
@@ -126,5 +142,8 @@ ln -s /usr/bin/clang $netbsd_destdir/usr/bin/cc
 ln -s /usr/bin/clang++ $netbsd_destdir/usr/bin/c++
 
 # generate tar ball for destdir
-tar cvvf dest.tar $netbsd_destdir
+echo "Generating tar ball for destdir..."
+tar cpf dest.tar -C `dirname $netbsd_destdir` `basename $netbsd_destdir`
 gzip dest.tar
+
+echo "Done."
