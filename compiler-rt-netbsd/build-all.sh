@@ -142,8 +142,9 @@ ln -s /usr/bin/clang $netbsd_destdir/usr/bin/cc
 ln -s /usr/bin/clang++ $netbsd_destdir/usr/bin/c++
 
 # generate tar ball for destdir
+filename=NetBSD-distribution-clang7svn-libfuzzer-`date +%Y%m%d`
 echo "Generating tar ball for destdir..."
-tar cpf dest.tar -C `dirname $netbsd_destdir` `basename $netbsd_destdir`
-gzip dest.tar
-
+tar cpf $filename.tar -C `dirname $netbsd_destdir` `basename $netbsd_destdir`
+gzip $filename.tar
+echo "Generated "$filename".tar.gz, you can uncompress it and chroot to destdir."
 echo "Done."
