@@ -67,6 +67,7 @@ esac
 
 echo "Start building..."
 
+default_branch=gsoc2018
 llvm_repo=https://github.com/plusun/llvm.git
 clang_repo=https://github.com/plusun/clang.git
 crt_repo=https://github.com/plusun/compiler-rt.git
@@ -75,9 +76,14 @@ netbsd_src_repo=https://github.com/plusun/src.git
 clone_to() {
     repo=$1
     dir=$2
-
+    nr_args=$#
+    if [ "$nr_args" -eq "3" ]; then
+	branch=$3
+    else
+	branch=$default_branch
+    fi
     mkdir -p $dir
-    (cd $dir && git clone $repo .)
+    (cd $dir && git clone $repo -b $branch .)
 }
 
 set -x
