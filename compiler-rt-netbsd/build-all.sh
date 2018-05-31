@@ -134,24 +134,24 @@ rm $netbsd_external_tooldir/bin/x86_64--netbsd-clang
 ln -s $llvm_build_dir/bin/clang $netbsd_external_tooldir/bin/x86_64--netbsd-clang
 ### prepare tooldir
 # cp -RH $netbsd_external_tooldir $netbsd_tooldir
-## build source
-# (cd $netbsd_src_dir && \
-#      ./build.sh -T $netbsd_tooldir -D $netbsd_destdir -R $netbsd_releasedir \
-# 		-O $netbsd_objdir -X $netbsd_xsrc -m amd64 -u \
-# 		-V MKX11=no -V HAVE_LLVM=yes -V MKLLVM=no \
-# 		-V MKGCC=no -V MKCXX=yes -V MKLIBCXX=yes -V MKCOMPAT=no -V MKATF=no \
-# 		-V HOST_CC=$llvm_build_dir/bin/clang \
-# 		-V HOST_CXX=$llvm_build_dir/bin/clang++ \
-# 		-V EXTERNAL_TOOLCHAIN=$netbsd_external_tooldir \
-# 		-j$nr_threads distribution)
+build source
+(cd $netbsd_src_dir && \
+     ./build.sh -T $netbsd_tooldir -D $netbsd_destdir -R $netbsd_releasedir \
+		-O $netbsd_objdir -X $netbsd_xsrc -m amd64 -u \
+		-V MKX11=no -V HAVE_LLVM=yes -V MKLLVM=no \
+		-V MKGCC=no -V MKCXX=yes -V MKLIBCXX=yes -V MKCOMPAT=no -V MKATF=no \
+		-V HOST_CC=$llvm_build_dir/bin/clang \
+		-V HOST_CXX=$llvm_build_dir/bin/clang++ \
+		-V EXTERNAL_TOOLCHAIN=$netbsd_external_tooldir \
+		-j$nr_threads tools)
 
-# # install external LLVM into destdir
-# (cd $llvm_build_dir && \
-#      make install DESTDIR=$netbsd_destdir)
+# install external LLVM into destdir
+(cd $llvm_build_dir && \
+     make install DESTDIR=$netbsd_destdir)
 
-# # create cc and c++ for destdir
-# ln -s /usr/bin/clang $netbsd_destdir/usr/bin/cc
-# ln -s /usr/bin/clang++ $netbsd_destdir/usr/bin/c++
+# create cc and c++ for destdir
+ln -s /usr/bin/clang $netbsd_destdir/usr/bin/cc
+ln -s /usr/bin/clang++ $netbsd_destdir/usr/bin/c++
 
 # # generate tar ball for destdir
 # filename=NetBSD-distribution-clang7svn-libfuzzer-`date +%Y%m%d`
