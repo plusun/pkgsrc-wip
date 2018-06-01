@@ -134,7 +134,7 @@ rm $netbsd_external_tooldir/bin/x86_64--netbsd-clang
 ln -s $llvm_build_dir/bin/clang $netbsd_external_tooldir/bin/x86_64--netbsd-clang
 ### prepare tooldir
 # cp -RH $netbsd_external_tooldir $netbsd_tooldir
-build source
+# build source
 (cd $netbsd_src_dir && \
      ./build.sh -T $netbsd_tooldir -D $netbsd_destdir -R $netbsd_releasedir \
 		-O $netbsd_objdir -X $netbsd_xsrc -m amd64 -u \
