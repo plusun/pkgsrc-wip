@@ -8,13 +8,13 @@ set -e
 
 nr_threads=`getconf NPROCESSORS_CONF`
 
-llvm_root=/public  # root dir for LLVM to store source and build
+llvm_root=/public-static  # root dir for LLVM to store source and build
 llvm_dir=$llvm_root/llvm/  # dir to hold llvm source
 clang_dir=$llvm_root/clang/ #dir to hold clang source
 crt_dir=$llvm_root/compiler-rt/ #dir to hold compiler-rt source
 llvm_build_dir=$llvm_root/llvm-build/ # dir to build llvm
 
-netbsd_root=/public
+netbsd_root=/public-static
 netbsd_src_dir=$netbsd_root/src/ #dir to hold NetBSD source
 netbsd_external_tooldir=$netbsd_root/extern_tooldir/ # dir to hold external toolchain
 netbsd_tooldir=$netbsd_root/tooldir/ # dir to hold toolchain
@@ -108,11 +108,12 @@ mkdir -p $llvm_build_dir
 	   -DCMAKE_INSTALL_PREFIX=/usr/ \
 	   -DLLVM_BUILD_DOCS=OFF \
 	   -DLLVM_TARGETS_TO_BUILD=X86 \
-	   -DCLANG_ENABLE_ARCMT=OFF \
-	   -DLLVM_BUILD_TESTS=OFF \
-	   -DLLVM_INCLUDE_TESTS=OFF \
+	   -DLLVM_ENABLE_MODULES=OFF \
+	   -DLIBCLANG_BUILD_STATIC=ON \
 	   $llvm_dir && \
      make -j $nr_threads)
+
+exit 0
 
 # building NetBSD source
 ## prepare source
