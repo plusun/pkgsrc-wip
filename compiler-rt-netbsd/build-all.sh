@@ -91,7 +91,7 @@ set -x
 
 # building LLVM external toolchain
 clone_to $llvm_repo $llvm_dir
-clone_to $clang_repo $clang_dir sanitizer-expr
+clone_to $clang_repo $clang_dir
 clone_to $crt_repo $crt_dir sanitizer-expr
 ln -s $crt_dir $llvm_dir/projects/compiler-rt
 ln -s $clang_dir $llvm_dir/tools/clang
