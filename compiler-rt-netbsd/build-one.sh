@@ -16,7 +16,7 @@ target_dir=`readlink -f $2`
 export PATH=$netbsd_root/tooldir/bin/:$PATH
 export PATH=$netbsd_root/extern_tooldir/bin/:$PATH
 (cd $target_dir; \
- $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads $@ clean; \
- $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads $@ dependall; \
- $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads $@; \
- $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads $@ install)
+ $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads clean; \
+ $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads dependall; \
+ $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads ; \
+ $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads install)
