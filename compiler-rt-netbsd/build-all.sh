@@ -90,7 +90,7 @@ clone_to() {
 set -x
 
 # building LLVM external toolchain
-clone_to $llvm_repo $llvm_dir
+clone_to $llvm_repo $llvm_dir sanitizer-expr
 clone_to $clang_repo $clang_dir
 clone_to $crt_repo $crt_dir sanitizer-expr
 ln -s $crt_dir $llvm_dir/projects/compiler-rt
@@ -112,8 +112,6 @@ mkdir -p $llvm_build_dir
 	   -DLIBCLANG_BUILD_STATIC=ON \
 	   $llvm_dir && \
      make -j $nr_threads)
-
-exit 0
 
 # building NetBSD source
 ## prepare source
@@ -144,7 +142,7 @@ ln -s $llvm_build_dir/bin/clang $netbsd_external_tooldir/bin/x86_64--netbsd-clan
 		-V HOST_CC=$llvm_build_dir/bin/clang \
 		-V HOST_CXX=$llvm_build_dir/bin/clang++ \
 		-V EXTERNAL_TOOLCHAIN=$netbsd_external_tooldir \
-		-j$nr_threads tools)
+		-j$nr_threads distribution)
 
 # install external LLVM into destdir
 (cd $llvm_build_dir && \
