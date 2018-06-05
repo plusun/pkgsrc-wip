@@ -8,13 +8,13 @@ set -e
 
 nr_threads=`getconf NPROCESSORS_CONF`
 
-llvm_root=/public-static  # root dir for LLVM to store source and build
+llvm_root=/public  # root dir for LLVM to store source and build
 llvm_dir=$llvm_root/llvm/  # dir to hold llvm source
 clang_dir=$llvm_root/clang/ #dir to hold clang source
 crt_dir=$llvm_root/compiler-rt/ #dir to hold compiler-rt source
 llvm_build_dir=$llvm_root/llvm-build/ # dir to build llvm
 
-netbsd_root=/public-static
+netbsd_root=/public
 netbsd_src_dir=$netbsd_root/src/ #dir to hold NetBSD source
 netbsd_external_tooldir=$netbsd_root/extern_tooldir/ # dir to hold external toolchain
 netbsd_tooldir=$netbsd_root/tooldir/ # dir to hold toolchain
@@ -90,9 +90,9 @@ clone_to() {
 set -x
 
 # building LLVM external toolchain
-clone_to $llvm_repo $llvm_dir sanitizer-expr
+clone_to $llvm_repo $llvm_dir
 clone_to $clang_repo $clang_dir
-clone_to $crt_repo $crt_dir sanitizer-expr
+clone_to $crt_repo $crt_dir
 ln -s $crt_dir $llvm_dir/projects/compiler-rt
 ln -s $clang_dir $llvm_dir/tools/clang
 
@@ -115,7 +115,7 @@ mkdir -p $llvm_build_dir
 
 # building NetBSD source
 ## prepare source
-clone_to $netbsd_src_repo $netbsd_src_dir sanitizer-expr
+clone_to $netbsd_src_repo $netbsd_src_dir
 ## create dirs
 mkdir -p $netbsd_external_tooldir $netbsd_destdir $netbsd_releasedir $netbsd_objdir $netbsd_xsrc
 ## prepare external toolchain
@@ -152,10 +152,10 @@ ln -s $llvm_build_dir/bin/clang $netbsd_external_tooldir/bin/x86_64--netbsd-clan
 ln -s /usr/bin/clang $netbsd_destdir/usr/bin/cc
 ln -s /usr/bin/clang++ $netbsd_destdir/usr/bin/c++
 
-# # generate tar ball for destdir
-# filename=NetBSD-distribution-clang7svn-libfuzzer-`date +%Y%m%d`
-# echo "Generating tar ball for destdir..."
-# tar cpf $filename.tar -C `dirname $netbsd_destdir` `basename $netbsd_destdir`
-# gzip $filename.tar
-# echo "Generated "$filename".tar.gz, you can uncompress it and chroot to destdir."
+# generate tar ball for destdir
+filename=NetBSD-distribution-clang7svn-libfuzzer-`date +%Y%m%d`
+echo "Generating tar ball for destdir..."
+tar cpf $filename.tar -C `dirname $netbsd_destdir` `basename $netbsd_destdir`
+gzip $filename.tar
+echo "Generated "$filename".tar.gz, you can uncompress it and chroot to destdir."
 echo "Done."
