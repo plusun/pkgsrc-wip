@@ -8,20 +8,21 @@ set -e
 
 nr_threads=`getconf NPROCESSORS_CONF`
 
-llvm_root=/public  # root dir for LLVM to store source and build
+llvm_root=/public-static  # root dir for LLVM to store source and build
 llvm_dir=$llvm_root/llvm/  # dir to hold llvm source
 clang_dir=$llvm_root/clang/ #dir to hold clang source
 crt_dir=$llvm_root/compiler-rt/ #dir to hold compiler-rt source
 llvm_build_dir=$llvm_root/llvm-build/ # dir to build llvm
 
-netbsd_src_dir=/usr/src/ #dir to hold NetBSD source
-netbsd_external_tooldir=/usr/extern_tooldir/ # dir to hold external toolchain
-netbsd_tooldir=/usr/tooldir/ # dir to hold toolchain
-netbsd_destdir=/usr/destdir/
-netbsd_releasedir=/usr/releasedir/
-netbsd_external_objdir=/usr/extern_objdir/
-netbsd_objdir=/usr/objdir/
-netbsd_xsrc=/usr/xsrc/
+netbsd_root=/public-static
+netbsd_src_dir=$netbsd_root/src/ #dir to hold NetBSD source
+netbsd_external_tooldir=$netbsd_root/extern_tooldir/ # dir to hold external toolchain
+netbsd_tooldir=$netbsd_root/tooldir/ # dir to hold toolchain
+netbsd_destdir=$netbsd_root/destdir/
+netbsd_releasedir=$netbsd_root/releasedir/
+netbsd_external_objdir=$netbsd_root/extern_objdir/
+netbsd_objdir=$netbsd_root/objdir/
+netbsd_xsrc=$netbsd_root/xsrc/
 
 # check dependencies
 check_command() {
@@ -89,15 +90,16 @@ clone_to() {
 set -x
 
 # building LLVM external toolchain
-clone_to $llvm_repo $llvm_dir
+clone_to $llvm_repo $llvm_dir sanitizer-expr
 clone_to $clang_repo $clang_dir
-clone_to $crt_repo $crt_dir
+clone_to $crt_repo $crt_dir sanitizer-expr
 ln -s $crt_dir $llvm_dir/projects/compiler-rt
 ln -s $clang_dir $llvm_dir/tools/clang
 
 mkdir -p $llvm_build_dir
 (cd $llvm_build_dir && \
      cmake -DCMAKE_BUILD_TYPE=Release \
+	   -DLLVM_BUILD_STATIC=ON \
 	   -DCMAKE_C_COMPILER=$clang_path \
 	   -DCMAKE_CXX_COMPILER=$clangpp_path \
 	   -DCLANG_DEFAULT_CXX_STDLIB=libc++ \
@@ -105,12 +107,15 @@ mkdir -p $llvm_build_dir
 	   -DSANITIZER_CXX_ABI=libc++ \
 	   -DCMAKE_INSTALL_PREFIX=/usr/ \
 	   -DLLVM_BUILD_DOCS=OFF \
+	   -DLLVM_TARGETS_TO_BUILD=X86 \
+	   -DLLVM_ENABLE_MODULES=OFF \
+	   -DLIBCLANG_BUILD_STATIC=ON \
 	   $llvm_dir && \
      make -j $nr_threads)
 
 # building NetBSD source
 ## prepare source
-clone_to $netbsd_src_repo $netbsd_src_dir
+clone_to $netbsd_src_repo $netbsd_src_dir sanitizer-expr
 ## create dirs
 mkdir -p $netbsd_external_tooldir $netbsd_destdir $netbsd_releasedir $netbsd_objdir $netbsd_xsrc
 ## prepare external toolchain
@@ -118,7 +123,7 @@ mkdir -p $netbsd_external_tooldir $netbsd_destdir $netbsd_releasedir $netbsd_obj
      ./build.sh -T $netbsd_external_tooldir -D $netbsd_destdir -R $netbsd_releasedir \
 		-O $netbsd_external_objdir -X $netbsd_xsrc -m amd64 -r \
 		-V MKX11=no -V HAVE_LLVM=yes \
-		-V MKLLVM=yes -V MKGCC=no \
+		-V MKLLVM=yes -V MKGCC=no -V MKCOMPAT=no -V MKATF=no \
 		-V HOST_CC=$llvm_build_dir/bin/clang \
 		-V HOST_CXX=$llvm_build_dir/bin/clang++ -j $nr_threads \
 		tools)
@@ -128,12 +133,12 @@ rm $netbsd_external_tooldir/bin/x86_64--netbsd-clang
 ln -s $llvm_build_dir/bin/clang $netbsd_external_tooldir/bin/x86_64--netbsd-clang
 ### prepare tooldir
 # cp -RH $netbsd_external_tooldir $netbsd_tooldir
-## build source
+# build source
 (cd $netbsd_src_dir && \
      ./build.sh -T $netbsd_tooldir -D $netbsd_destdir -R $netbsd_releasedir \
 		-O $netbsd_objdir -X $netbsd_xsrc -m amd64 -u \
 		-V MKX11=no -V HAVE_LLVM=yes -V MKLLVM=no \
-		-V MKGCC=no -V MKCXX=yes -V MKLIBCXX=yes \
+		-V MKGCC=no -V MKCXX=yes -V MKLIBCXX=yes -V MKCOMPAT=no -V MKATF=no \
 		-V HOST_CC=$llvm_build_dir/bin/clang \
 		-V HOST_CXX=$llvm_build_dir/bin/clang++ \
 		-V EXTERNAL_TOOLCHAIN=$netbsd_external_tooldir \
@@ -147,10 +152,10 @@ ln -s $llvm_build_dir/bin/clang $netbsd_external_tooldir/bin/x86_64--netbsd-clan
 ln -s /usr/bin/clang $netbsd_destdir/usr/bin/cc
 ln -s /usr/bin/clang++ $netbsd_destdir/usr/bin/c++
 
-# generate tar ball for destdir
-filename=NetBSD-distribution-clang7svn-libfuzzer-`date +%Y%m%d`
-echo "Generating tar ball for destdir..."
-tar cpf $filename.tar -C `dirname $netbsd_destdir` `basename $netbsd_destdir`
-gzip $filename.tar
-echo "Generated "$filename".tar.gz, you can uncompress it and chroot to destdir."
+# # generate tar ball for destdir
+# filename=NetBSD-distribution-clang7svn-libfuzzer-`date +%Y%m%d`
+# echo "Generating tar ball for destdir..."
+# tar cpf $filename.tar -C `dirname $netbsd_destdir` `basename $netbsd_destdir`
+# gzip $filename.tar
+# echo "Generated "$filename".tar.gz, you can uncompress it and chroot to destdir."
 echo "Done."
