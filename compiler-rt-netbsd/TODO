@@ -8,5 +8,12 @@
   ENOSYS. https://reviews.llvm.org/D39254
   Check whether it is valid for NetBSD.
 - Fix remaining issues in Sanitizers.
+  - missing reallocarr(3) and reallocarray(3) interceptors
+  - missing proper check for "struct xxx_args" stored in "data"
+    parameter of mount interceptors
+  - ioctl(2)-related issues
+  - singal-related issues
+  - missing check for "FILE" type
+  - getchar(3)/putchar(3)-related issues
 - Interceptors for the set{ut,utx,pw,netgr,gr,host,serv,pass}ent() family of
   functions

@@ -48,7 +48,18 @@ diff -u -r1.354 uvm_map.c
  		if (count == 0)
 
 TODO:
+ - Integrating userland programs with libFuzzer:
+   1. file
+   2. sed
+   3. sh
+   4. make
+   5. ftp
+   6. ftpd
+   7. bozohttpd
+   8. ping / ping6
+   9. traceroute / traceroute6
+   10. dhcpcd
+   11. iscsi-target
  - oom-killer, research a crasher and share with kernel developers (assignee: plusun)
  - oom-killer, add a new ATF test to check oom-killer (assignee: plusun)
- - upstream semaphore fixes to reviews.llvm.org (assignee: plusun)
  - getrusage(2) fix pullup to -8 or find a workaround for 8.0 (assignee: christos?)
