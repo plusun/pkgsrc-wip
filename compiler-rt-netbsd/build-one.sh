@@ -2,8 +2,8 @@
 
 nr_threads=`getconf NPROCESSORS_CONF`
 
-if [ "$#" -lt 2 ]; then
-    echo "Usage: $0 work_dir target_dir"
+if [ "$#" -lt 3 ]; then
+    echo "Usage: $0 work_dir no_link sanitizers"
     exit 1
 fi
 
@@ -11,21 +11,36 @@ set -e
 set -x
 
 netbsd_root=`readlink -f $1`
-target_dir=`readlink -f $2`
+no_link=$2
+MAKE_FLAGS='DESTDIR='"$netbsd_root/destdir/"' USETOOLS=no MKLLVM=yes HAVE_LLVM=yes MKGCC=no'
+SANITIZERS=$3
 
 count=0
 target=
 for i in $@; do
     count=$(($count + 1))
-    if [ $count -ne 1 ] && [ $count -ne 2 ]; then
+    if [ $count -gt 3 ]; then
 	target=$target" "$i
     fi
 done
 
-export PATH=$netbsd_root/tooldir/bin/:$PATH
-export PATH=$netbsd_root/extern_tooldir/bin/:$PATH
-(cd $target_dir; \
- $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads $target clean; \
- $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads $target dependall; \
- $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads $target; \
- $netbsd_root/tooldir/bin/nbmake-amd64 -j$nr_threads $target install)
+if [ "$SANITIZERS" = "none" ]; then
+    SANFLAGS=""
+else
+    SANFLAGS='-fsanitize='"$SANITIZERS"''
+fi
+LLVM_BIN=$netbsd_root/llvm-build/bin/
+COMPILE_FLAGS='"$SANFLAGS" -g -O0'
+LINK_FLAGS='"$SANFLAGS" -g -O0'
+CCFLAGS='CC='"$LLVM_BIN"'/clang CFLAGS="'"$COMPILE_FLAGS"'" CXX='"$LLVM_BIN"'/clang++ CXXFLAGS="'"$COMPILE_FLAGS"'"'
+LDFLAGS='LDFLAGS="'"$LINK_FLAGS"'"'
+LIB_LDFLAGS='LDFLAGS="'"$COMPILE_FLAGS"'"'
+
+if [ "$no_link" = "true" ]; then
+    ALL_FLAGS="$MAKE_FLAGS $CCFLAGS $LIB_LDFLAGS"
+else
+    ALL_FLAGS="$MAKE_FLAGS $CCFLAGS $LDFLAGS"
+fi
+
+build="make $ALL_FLAGS $target"
+eval $build
