@@ -29,7 +29,7 @@ if [ "$SANITIZERS" = "none" ]; then
 else
     SANITIZERS=','"$SANITIZERS"''
 fi
-LLVM_BIN=$netbsd_root/llvm-build/bin/
+LLVM_BIN=$netbsd_root/destdir/usr/bin/
 COMPILE_FLAGS='-DENABLE_FUZZER -fsanitize=fuzzer-no-link'"$SANITIZERS"' -g -O0'
 LINK_FLAGS='-DENABLE_FUZZER -fsanitize=fuzzer'"$SANITIZERS"' -g -O0'
 CCFLAGS='CC='"$LLVM_BIN"'/clang CFLAGS="'"$COMPILE_FLAGS"'" CXX='"$LLVM_BIN"'/clang++ CXXFLAGS="'"$COMPILE_FLAGS"'"'
