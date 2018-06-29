@@ -15,4 +15,5 @@ USE_TOOLS+= bash:run gmake
 
 WRKSRC=	${WRKDIR}/honggfuzz-oss-fuzz
 
+.include "../../lang/libBlocksRuntime/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"
