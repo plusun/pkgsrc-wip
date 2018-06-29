@@ -12,7 +12,7 @@ chroot_dict=/expr-dict
 corpus=$destdir$chroot_corpus
 dict=$destdir$chroot_dict
 mkdir -p $corpus
-echo "1 / 2" >> $corpus/initial
+echo "1 / 2" > $corpus/initial
 cat > $dict <<EOF
 min="-9223372036854775808"
 max="9223372036854775807"
