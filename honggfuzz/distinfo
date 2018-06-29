@@ -1,0 +1,7 @@
+$NetBSD$
+
+SHA1 (honggfuzz/honggfuzz-oss-fuzz.zip) = 9fb7117da8167a8e79b7034b149388a888efd989
+RMD160 (honggfuzz/honggfuzz-oss-fuzz.zip) = ea80955110f70a37b71b7f968edad092e93649d7
+SHA512 (honggfuzz/honggfuzz-oss-fuzz.zip) = c487dfbd65eadf32c26c22c0c68d5dcafca78a31c36d6cc348c4bfa378e8bcb044a6df81a1803f0e671183f1e3964516d2ac0b9d75fbe7205da95c3ef7ed85d8
+Size (honggfuzz/honggfuzz-oss-fuzz.zip) = 84139142 bytes
+SHA1 (patch-Makefile) = 77636fab927ec6702f90b5734a2d085271cb14b9
