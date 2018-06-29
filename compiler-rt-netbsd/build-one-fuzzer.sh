@@ -2,24 +2,24 @@
 
 nr_threads=`getconf NPROCESSORS_CONF`
 
-if [ "$#" -lt 3 ]; then
-    echo "Usage: $0 work_dir no_link sanitizers"
+if [ "$#" -lt 4 ]; then
+    echo "Usage: $0 netbsd_destdir llvm_bin_dir no_link sanitizers"
     exit 1
 fi
 
 set -e
 set -x
 
-netbsd_root=`readlink -f $1`
-no_link=$2
-MAKE_FLAGS='DESTDIR='"$netbsd_root/destdir/"' USETOOLS=no MKLLVM=yes HAVE_LLVM=yes MKGCC=no'
-SANITIZERS=$3
+netbsd_destdir=`readlink -f $1`
+no_link=$3
+MAKE_FLAGS='DESTDIR='"$netbsd_destdir/"' USETOOLS=no MKLLVM=yes HAVE_LLVM=yes MKGCC=no'
+SANITIZERS=$4
 
 count=0
 target=
 for i in $@; do
     count=$(($count + 1))
-    if [ $count -gt 3 ]; then
+    if [ $count -gt 4 ]; then
 	target=$target" "$i
     fi
 done
@@ -29,7 +29,7 @@ if [ "$SANITIZERS" = "none" ]; then
 else
     SANITIZERS=','"$SANITIZERS"''
 fi
-LLVM_BIN=$netbsd_root/destdir/usr/bin/
+LLVM_BIN=`readlink -f $2`
 COMPILE_FLAGS='-DENABLE_FUZZER -fsanitize=fuzzer-no-link'"$SANITIZERS"' -g -O0'
 LINK_FLAGS='-DENABLE_FUZZER -fsanitize=fuzzer'"$SANITIZERS"' -g -O0'
 CCFLAGS='CC='"$LLVM_BIN"'/clang CFLAGS="'"$COMPILE_FLAGS"'" CXX='"$LLVM_BIN"'/clang++ CXXFLAGS="'"$COMPILE_FLAGS"'"'
