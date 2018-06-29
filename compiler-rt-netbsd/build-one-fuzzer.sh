@@ -3,7 +3,7 @@
 nr_threads=`getconf NPROCESSORS_CONF`
 
 if [ "$#" -lt 4 ]; then
-    echo "Usage: $0 netbsd_destdir llvm_bin_dir no_link sanitizers"
+    echo "Usage: $0 netbsd_destdir llvm_bin_dir no_link sanitizers|none"
     exit 1
 fi
 
