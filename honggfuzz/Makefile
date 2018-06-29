@@ -1,14 +1,12 @@
 # $NetBSD$
 
-GITHUB_PROJECT=	honggfuzz
 DISTNAME=	honggfuzz-1.6
 CATEGORIES=	devel
 MASTER_SITES=	${MASTER_SITE_GITHUB:=google/}
-GITHUB_TAG=	1.6
 
 MAINTAINER=	tomsun.0.7@gmail.com
 HOMEPAGE=	https://github.com/google/honggfuzz/
-COMMENT=	Fuzzing tool
+COMMENT=	Security oriented fuzzer based on code coverage
 LICENSE=	apache-2.0
 
 USE_TOOLS+=	bash:run gmake
