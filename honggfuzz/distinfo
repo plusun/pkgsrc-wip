@@ -1,7 +1,9 @@
 $NetBSD$
 
-SHA1 (honggfuzz/honggfuzz-oss-fuzz.zip) = 9fb7117da8167a8e79b7034b149388a888efd989
-RMD160 (honggfuzz/honggfuzz-oss-fuzz.zip) = ea80955110f70a37b71b7f968edad092e93649d7
-SHA512 (honggfuzz/honggfuzz-oss-fuzz.zip) = c487dfbd65eadf32c26c22c0c68d5dcafca78a31c36d6cc348c4bfa378e8bcb044a6df81a1803f0e671183f1e3964516d2ac0b9d75fbe7205da95c3ef7ed85d8
-Size (honggfuzz/honggfuzz-oss-fuzz.zip) = 84139142 bytes
-SHA1 (patch-Makefile) = 77636fab927ec6702f90b5734a2d085271cb14b9
+SHA1 (honggfuzz-1.6.tar.gz) = e6ab2a411fe8726e57815209d6fb1b6f4268538c
+RMD160 (honggfuzz-1.6.tar.gz) = 8ef15a0e38cd09a26f82a3683da6a363257ddce1
+SHA512 (honggfuzz-1.6.tar.gz) = db4f0f31d36080db983068435be82b3e1132145e0bad5c4e8e6504563f10ce66df4f977fbd0a9f1cbcd262e479f635a68ab7c1df70d23e8437164734ea562c90
+Size (honggfuzz-1.6.tar.gz) = 79322453 bytes
+SHA1 (patch-Makefile) = 3c0242922d4e457637072ef93cd1a7cb5cf8973f
+SHA1 (patch-libhfcommon_util.c) = 9f00448a2cfc3436c87a2b2a33dcd92de6afc49b
+SHA1 (patch-libhfuzz_memorycmp.c) = fed71b1e414f54788cabec18f4cd7fda40585123
