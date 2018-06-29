@@ -10,8 +10,8 @@ fi
 set -e
 set -x
 
-cc=`readlink -f $1`
-cxx=`readlink -f $2`
+cc=$1
+cxx=$2
 netbsd_destdir=`readlink -f $3`
 MAKE_FLAGS='DESTDIR='"$netbsd_destdir/"' USETOOLS=no MKLLVM=yes HAVE_LLVM=yes MKGCC=no'
 SANITIZERS=$4
