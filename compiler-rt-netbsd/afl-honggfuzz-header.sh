@@ -62,7 +62,5 @@ install_fuzzer() {
     cp $path $destdir/$base
 }
 
-install_fuzzer
-
 set -e
 set -x
