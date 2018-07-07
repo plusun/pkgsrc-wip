@@ -62,5 +62,8 @@ install_fuzzer() {
     cp $path $destdir/$base
 }
 
+
+export UBSAN_OPTIONS=halt_on_error=1
+
 set -e
 set -x
