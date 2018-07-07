@@ -18,6 +18,7 @@ done
 set -e
 set -x
 
+$tool $options clean
 $tool $options
 $tool $options clean
 $tool $options -j$nr_threads
