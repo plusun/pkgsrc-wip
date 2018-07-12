@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -x
-
 usage() {
     echo "Usage: $0 libFuzzer|AFL|honggfuzz|Radamsa sanitizers|none single-file-source"
 }
@@ -94,7 +92,7 @@ fuzz() {
 	    rm -rf hongg-input
 	    mkdir hongg-input
 	    echo $seed > hogng-input/seed
-	    honggfuzz -f hongg-input -- ./$target ___FILE___
+	    honggfuzz -f hongg-input -P --exit_upon_crash -- ./$target ___FILE___
 	    ;;
 	Radamsa)
 	    echo $seed > radamsa-input
