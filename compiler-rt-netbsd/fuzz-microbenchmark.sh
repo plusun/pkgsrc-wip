@@ -47,6 +47,7 @@ fi
 target="fuzz-me"
 
 compile_source() {
+    rm $target
     sanflag=
     if [ $sanitizers != "none" ]; then
 	sanflag=$sanitizers
@@ -62,6 +63,7 @@ compile_source() {
 	    afl-clang++ -fsanitize=$sanflag -Wall -Werror -o $target $file $main
 	    ;;
 	honggfuzz)
+	    #hfuzz-clang++ -fsanitize=$sanflag -Wall -Werror -fsanitize-coverage=trace-pc-guard,inline-8bit-counters,pc-table,trace-pc -o $target $file $main
 	    hfuzz-clang++ -fsanitize=$sanflag -Wall -Werror -o $target $file $main
 	    ;;
 	Radamsa)
@@ -78,7 +80,10 @@ seed=19950109
 fuzz() {
     case $fuzzer in
 	libFuzzer)
-	    ./$target -seed=$seed
+	    rm -rf libFuzzer-input
+	    mkdir libFuzzer-input
+	    # echo $seed > libFuzzer-input/seed
+	    ./$target -seed=$seed libFuzzer-input
 	    ;;
 	AFL)
 	    rm -rf afl-input
@@ -86,16 +91,16 @@ fuzz() {
 	    mkdir afl-input
 	    mkdir afl-output
 	    echo $seed > afl-input/seed
-	    afl-fuzz -i afl-input -o afl-output -m none -t 300+ -- ./$target @@
+	    afl-fuzz -d -i afl-input -o afl-output -m none -t 300+ -- ./$target @@
 	    ;;
 	honggfuzz)
 	    rm -rf hongg-input
 	    mkdir hongg-input
-	    echo $seed > hogng-input/seed
-	    honggfuzz -f hongg-input -P --exit_upon_crash -- ./$target ___FILE___
+	    echo $seed > hongg-input/seed
+	    honggfuzz -f hongg-input --exit_upon_crash -P -- ./$target ___FILE___
 	    ;;
 	Radamsa)
-	    echo $seed > radamsa-input
+	    echo abc > radamsa-input
 	    while true; do
 		radamsa -s $seed radamsa-input > radamsa-input
 		./$target radamsa-input
