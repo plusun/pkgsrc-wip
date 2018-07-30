@@ -83,10 +83,10 @@ _libc_init(void)
 		continue;
 	first++;
 	
+	original = dlsym(RTLD_NEXT, "_libc_init");
+	(*original)();
         if (strcmp(first, "REPLACEME") == 0) {
 		ReExec();
 		/* NOTREACHED */
 	}
-	original = dlsym(RTLD_NEXT, "_libc_init");
-	(*original)();
 }
