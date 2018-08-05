@@ -97,7 +97,7 @@ fuzz() {
 	    rm -rf hongg-input
 	    mkdir hongg-input
 	    echo $seed > hongg-input/seed
-	    honggfuzz -f hongg-input --exit_upon_crash -P -- ./$target ___FILE___
+	    honggfuzz -f hongg-input --exit_upon_crash -- ./$target ___FILE___
 	    ;;
 	Radamsa)
 	    echo abc > radamsa-input
